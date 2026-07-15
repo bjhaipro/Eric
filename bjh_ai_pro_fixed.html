@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BJH AI Pro">
+<title>BJH AI Pro</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--blue:#2563eb;--green:#16a34a;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC",sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:760px;margin:0 auto;padding:18px 16px 92px}.screen{display:none}.screen.active{display:block}
+header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin:10px 0 18px}h1{font-size:42px;margin:4px 0 0}h2{font-size:28px;margin:0}small,.muted{color:var(--muted)}.online{color:var(--green)}
+.grid2,.grid3{display:grid;gap:12px;margin:12px 0}.grid2{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:repeat(3,1fr)}
+article,.card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+article span{display:block;color:var(--muted);font-size:14px}article strong{display:block;font-size:24px;margin-top:6px}.card{margin:14px 0}.decision{border:1px solid #dbeafe}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.big{font-size:30px;font-weight:800;margin:16px 0}.up{color:var(--green)}.down{color:var(--red)}
+button{border:0;border-radius:14px;padding:13px 16px;font-size:18px;font-weight:700}.primary{width:100%;background:var(--blue);color:#fff;margin:6px 0 14px}.small,.back{background:#e5e7eb}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.buy{background:#dcfce7;color:#166534}.hold{background:#dbeafe;color:#1d4ed8}.sell{background:#fee2e2;color:#991b1b}.note{text-align:center;color:var(--muted);font-size:13px}
+.chart{height:90px;border-radius:12px;background:linear-gradient(135deg,#dbeafe,#eff6ff);margin-top:12px}.price{font-size:42px;font-weight:800}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e5e7eb;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:max(8px,env(safe-area-inset-bottom))}
+nav button{background:#fff;color:var(--muted);border-radius:0;padding:14px 4px}nav button.active{color:var(--blue)}
+.sheet[hidden]{display:none}.sheet{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:flex-end;z-index:20}
+.sheet>div{width:100%;background:#fff;border-radius:24px 24px 0 0;padding:22px 18px max(24px,env(safe-area-inset-bottom))}
+.sheet button{display:block;width:100%;margin:10px 0;background:#f3f4f6;text-align:left}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:30}.toast.show{opacity:1}
+.stock{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb}
+@media(max-width:520px){h1{font-size:38px}.grid2{grid-template-columns:1fr}.big{font-size:27px}}
+</style>
+</head>
+<body>
+<main class="app">
+<section id="home" class="screen active">
+<header><div><small>AI 投資決策</small><h1>BJH AI Pro</h1></div><b class="online">● 模擬連線</b></header>
+<div class="grid2"><article><span>總資產</span><strong>NT$ 12,580,000</strong><small>可用現金 NT$ 568,760</small></article><article><span>今日損益</span><strong class="up">+1.02%</strong><small class="up">+ NT$ 126,800</small></article></div>
+<section class="card decision"><div class="row"><h2>AI 最終決策</h2><em>積極操作</em></div><div class="big">🟢 買：2330 台積電</div><p>續抱：3017 奇鋐｜賣：6442 光聖｜Phoenix 指數 87</p></section>
+<button id="start" class="primary">今天開始操作</button>
+<section class="card"><div class="row"><h2>我的持股</h2><button id="update" class="small">更新持股</button></div><div id="stocks"></div></section>
+<section class="card"><h2>今日警報</h2><p>🔔 2330 接近建議買點</p><p>⚠️ 6442 風險分數上升</p><p>📈 AI 伺服器族群維持強勢</p></section>
+<section class="card"><h2>CEO 今日一句話</h2><p>今天不追高，優先等待 AI 主流股拉回布局。</p></section>
+</section>
+<section id="detail" class="screen">
+<button id="back" class="back">‹ 返回首頁</button>
+<header><div><small>股票詳細分析</small><h1>2330 台積電</h1></div><em>續抱</em></header>
+<section class="card"><div class="price">1,125</div><div class="up">▲ 1.81%</div><div class="chart"></div></section>
+<section class="card decision"><h2>AI 建議</h2><div class="big">🟢 續抱</div><p>AI 信心 <b>94%</b></p></section>
+<div class="grid3"><article><span>買點</span><strong>1,100</strong></article><article><span>停利</span><strong>1,180</strong></article><article><span>停損</span><strong>1,080</strong></article></div>
+<div class="actions"><button data-act="買進" class="buy">買進</button><button data-act="續抱" class="hold">續抱</button><button data-act="賣出" class="sell">賣出</button></div>
+<p class="note">此 Alpha 版不會送出真實委託</p>
+</section>
+</main>
+<nav><button data-nav="home" class="active">持股</button><button data-nav="ai">AI</button><button data-nav="market">市場</button><button data-nav="me">我的</button></nav>
+<div id="sheet" class="sheet" hidden><div><h2>更新持股</h2><button data-up="拍照／截圖匯入">📷 拍照／截圖匯入</button><button data-up="券商同步">🔄 券商同步</button><button data-up="Excel／CSV 匯入">📄 Excel／CSV 匯入</button><button id="close">取消</button></div></div>
+<div id="toast" class="toast"></div>
+<script>
+const stocks=[["2330 台積電","419 股","+56.71%"],["3017 奇鋐","42 股","-10.94%"],["3481 群創","8,000 股","+26.81%"],["8033 雷虎","385 股","+43.51%"]];
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+$("#stocks").innerHTML=stocks.map(s=>`<div class="stock"><b>${s[0]}</b><span>${s[1]}｜${s[2]}</span></div>`).join("");
+$("#update").onclick=()=>{$("#sheet").hidden=false};
+$("#close").onclick=()=>{$("#sheet").hidden=true};
+$$("[data-up]").forEach(b=>b.onclick=()=>{$("#sheet").hidden=true;toast(b.dataset.up+"：Alpha 版測試功能已啟動")});
+$("#start").onclick=()=>{$("#home").classList.remove("active");$("#detail").classList.add("active");window.scrollTo(0,0)};
+$("#back").onclick=()=>{$("#detail").classList.remove("active");$("#home").classList.add("active");window.scrollTo(0,0)};
+$$("[data-act]").forEach(b=>b.onclick=()=>toast("已記錄模擬決策："+b.dataset.act));
+$$("[data-nav]").forEach(b=>b.onclick=()=>{$$("[data-nav]").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(b.dataset.nav==="home"){$("#detail").classList.remove("active");$("#home").classList.add("active")}else{toast(b.textContent+" 模組：V1 測試中")}});
+</script>
+</body>
+</html>
