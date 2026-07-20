@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/auth.js";
+import { create, evaluate, list, remove, update } from "../controllers/alert.controller.js";
+const router = Router();
+router.use(authenticate);
+router.get("/", list);
+router.post("/", create);
+router.post("/evaluate", evaluate);
+router.put("/:id", update);
+router.delete("/:id", remove);
+export default router;

@@ -1,0 +1,27 @@
+{
+  "name": "bjh-ai-pro-backend",
+  "version": "1.0.0-mobile-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/app.js && node --check src/controllers/auth.controller.js && node --check src/services/auth.service.js && node --check src/controllers/transaction.controller.js && node --check src/services/transaction.service.js && node --check src/services/portfolio-builder.js && node --check src/utils/transaction-validator.js && node --check ../frontend/js/api.js && node --check ../frontend/js/app.js && node --check ../frontend/sw.js && node --check src/controllers/market.controller.js && node --check src/services/market.service.js && node --check src/services/dashboard.service.js && node --check src/routes/market.routes.js && node --check src/controllers/strategy.controller.js && node --check src/services/strategy.service.js && node --check src/routes/strategy.routes.js && node --check src/controllers/watchlist.controller.js && node --check src/services/watchlist.service.js && node --check src/routes/watchlist.routes.js && node --check src/controllers/journal.controller.js && node --check src/services/journal.service.js && node --check src/routes/journal.routes.js && node --check src/controllers/cash.controller.js && node --check src/services/cash.service.js && node --check src/routes/cash.routes.js",
+    "verify": "node ../scripts/verify.mjs",
+    "test:core": "node --test ../tests/core.test.mjs",
+    "test": "npm run verify && npm run test:core"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  }
+}

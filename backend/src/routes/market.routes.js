@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/auth.js";
+import { dashboard, history, quotes, saveQuote, saveQuotes } from "../controllers/market.controller.js";
+const router = Router();
+router.get("/quotes", authenticate, quotes);
+router.post("/quotes/batch", authenticate, saveQuotes);
+router.get("/quotes/:code/history", authenticate, history);
+router.put("/quotes/:code", authenticate, (req,res,next) => { req.body.code = req.params.code; return saveQuote(req,res,next); });
+router.get("/dashboard", authenticate, dashboard);
+export default router;

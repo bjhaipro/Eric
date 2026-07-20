@@ -1,0 +1,61 @@
+BJH AI Pro V1.0 整合測試報告
+================================
+
+npm install：通過
+
+
+> bjh-ai-pro-backend@1.0.0-test verify
+> node ../scripts/verify.mjs
+
+整合檢查通過
+- JavaScript 檔案：107
+- 後端資料表：23
+- HTML 元件 ID：267
+- 前端程式 ID 引用：264
+
+
+> bjh-ai-pro-backend@1.0.0-test test:core
+> node --test ../tests/core.test.mjs
+
+TAP version 13
+# Subtest: 兩次買進後正確計算移動平均成本
+ok 1 - 兩次買進後正確計算移動平均成本
+  ---
+  duration_ms: 1.897737
+  type: 'test'
+  ...
+# Subtest: 部分賣出後正確計算已實現損益與剩餘成本
+ok 2 - 部分賣出後正確計算已實現損益與剩餘成本
+  ---
+  duration_ms: 0.212487
+  type: 'test'
+  ...
+# Subtest: 賣出超過持股時拒絕
+ok 3 - 賣出超過持股時拒絕
+  ---
+  duration_ms: 0.406292
+  type: 'test'
+  ...
+# Subtest: 交易輸入驗證接受正常買進資料
+ok 4 - 交易輸入驗證接受正常買進資料
+  ---
+  duration_ms: 0.256535
+  type: 'test'
+  ...
+# Subtest: 交易輸入驗證拒絕零股數
+ok 5 - 交易輸入驗證拒絕零股數
+  ---
+  duration_ms: 0.22528
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.05859
+
+環境限制：目前執行環境沒有 Docker，因此尚未在此處完成 PostgreSQL 容器啟動與 iPhone 真機測試。

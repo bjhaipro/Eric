@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BJH AI Pro</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <main class="shell">
+    <section id="authView" class="auth-card">
+      <div class="brand">
+        <div class="logo">BJH</div>
+        <div><h1>BJH AI Pro</h1><p>雲端投資管理</p></div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button id="loginTab" class="tab active" type="button">登入</button>
+        <button id="registerTab" class="tab" type="button">註冊</button>
+      </div>
+
+      <form id="authForm" class="form-stack">
+        <label id="nameField" class="field hidden">
+          <span>姓名</span>
+          <input id="name" name="name" maxlength="100" autocomplete="name">
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input id="email" name="email" type="email" required autocomplete="email" inputmode="email">
+        </label>
+        <label class="field">
+          <span>密碼</span>
+          <input id="password" name="password" type="password" minlength="8" maxlength="72" required autocomplete="current-password">
+        </label>
+        <button id="authSubmit" class="primary" type="submit">登入</button>
+      </form>
+    </section>
+
+    <section id="appView" class="app hidden">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">BJH AI Pro</p>
+          <h1 id="welcomeText">投資首頁</h1>
+        </div>
+        <button id="logoutButton" class="ghost" type="button">登出</button>
+      </header>
+
+      <nav class="feature-nav" aria-label="功能導覽">
+        <button class="feature-nav-button active" type="button" data-feature-filter="all">全部</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="favorites">★ 常用</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="recent">最近使用</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="popular">最常使用</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="hidden">已隱藏</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="today">今日</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="trade">交易</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="research">研究</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="plan">計畫</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="report">報告</button>
+        <button class="feature-nav-button" type="button" data-feature-filter="system">系統</button>
+      </nav>
+      <div class="feature-tools">
+        <label class="feature-search"><span class="sr-only">搜尋功能</span><input id="featureSearch" type="search" placeholder="搜尋功能，例如：持股、股價、備份"></label>
+        <button id="clearFeatureSearch" class="ghost" type="button">清除</button>
+        <button id="restoreHiddenFeatures" class="ghost" type="button">恢復隱藏功能</button>
+        <button id="resetFeatureOrder" class="ghost" type="button">重設功能排序</button>
+        <button id="resetFeatureUsage" class="ghost" type="button">重設使用紀錄</button>
+        <button id="toggleDisplaySettings" class="ghost" type="button" aria-expanded="false">顯示設定</button>
+        <span id="featureResultCount" class="feature-result-count"></span>
+      </div>
+      <section id="displaySettings" class="display-settings hidden" data-feature-always aria-label="顯示設定">
+        <div><strong>字體大小</strong><div class="segmented"><button type="button" data-font-size="standard">標準</button><button type="button" data-font-size="large">大字</button><button type="button" data-font-size="xlarge">特大字</button></div></div>
+        <div><strong>版面密度</strong><div class="segmented"><button type="button" data-density="comfortable">舒適</button><button type="button" data-density="compact">精簡</button></div></div>
+        <div><strong>登入後首頁</strong><div class="segmented startup-view-options"><button type="button" data-startup-view="today">今日</button><button type="button" data-startup-view="favorites">★ 常用</button><button type="button" data-startup-view="recent">最近使用</button><button type="button" data-startup-view="all">全部</button></div><small class="setting-help">下次登入或重新開啟 App 時，自動進入這個分類。</small></div>
+        <label class="setting-switch"><input id="highContrastSetting" type="checkbox"><span>高對比</span></label>
+        <label class="setting-switch"><input id="reduceMotionSetting" type="checkbox"><span>減少動畫</span></label>
+        <button id="saveDisplaySettings" class="primary" type="button">儲存並同步</button>
+      </section>
+
+      <section class="summary-grid" data-feature-always>
+        <article class="metric"><span>持股檔數</span><strong id="positionCount">0</strong></article>
+        <article class="metric"><span>持股總成本</span><strong id="totalCost">NT$0</strong></article>
+        <article class="metric"><span>目前市值</span><strong id="marketValue">NT$0</strong></article>
+        <article class="metric"><span>未實現損益</span><strong id="unrealizedProfit">NT$0</strong><small id="unrealizedRoi">0%</small></article>
+        <article class="metric"><span>已實現損益</span><strong id="realizedProfit">NT$0</strong></article>
+      </section>
+
+      <section id="freshnessPanel" class="panel" data-feature-key="data-freshness">
+        <div class="panel-head">
+          <div><p class="eyebrow">資料品質</p><h2>資料新鮮度中心</h2></div>
+          <button id="refreshFreshness" class="ghost" type="button">重新檢查</button>
+        </div>
+        <div id="freshnessSummary" class="ai-summary"></div>
+        <form id="freshnessPreferenceForm" class="freshness-form">
+          <label>股價超過幾小時視為過期<input id="quoteStaleHours" type="number" min="1" max="720" required></label>
+          <label>快照超過幾小時視為過期<input id="snapshotStaleHours" type="number" min="1" max="720" required></label>
+          <button type="submit">儲存設定</button>
+        </form>
+        <div id="freshnessItems" class="freshness-items"></div>
+      </section>
+
+      <section id="onboardingPanel" class="panel onboarding-panel" data-feature-key="quick-start">
+        <div class="panel-head">
+          <div><p class="eyebrow">快速啟動</p><h2>第一次使用設定精靈</h2></div>
+          <div class="card-actions">
+            <button id="refreshOnboarding" class="ghost" type="button">重新檢查</button>
+            <button id="dismissOnboarding" class="ghost" type="button">暫時隱藏</button>
+          </div>
+        </div>
+        <div id="onboardingSummary" class="ai-summary"></div>
+        <div class="progress-track onboarding-progress"><i id="onboardingProgressBar" style="width:0%"></i></div>
+        <div id="onboardingSteps" class="onboarding-steps"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">新增交易</p><h2 id="formTitle">輸入買進或賣出</h2></div>
+          <button id="cancelEdit" class="text-button hidden" type="button">取消修改</button>
+        </div>
+        <form id="transactionForm" class="transaction-form">
+          <input id="transactionId" type="hidden">
+          <label class="field"><span>類型</span><select id="type" required><option value="BUY">買進</option><option value="SELL">賣出</option></select></label>
+          <label class="field"><span>股票代碼</span><input id="code" required maxlength="20" autocapitalize="characters" placeholder="例如 2330"></label>
+          <label class="field"><span>股票名稱</span><input id="stockName" maxlength="100" placeholder="例如 台積電"></label>
+          <label class="field"><span>股數</span><input id="shares" type="number" min="1" step="1" required inputmode="numeric"></label>
+          <label class="field"><span>成交價</span><input id="price" type="number" min="0.0001" step="0.0001" required inputmode="decimal"></label>
+          <label class="field"><span>手續費</span><input id="fee" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+          <label class="field"><span>交易稅</span><input id="tax" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+          <label class="field"><span>交易日期</span><input id="tradeDate" type="date" required></label>
+          <label class="field field-wide"><span>備註</span><input id="note" maxlength="300" placeholder="可留空"></label>
+          <button id="saveTransaction" class="primary field-wide" type="submit">儲存交易</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Market</p><h2>更新目前股價</h2></div></div>
+        <form id="quoteForm" class="transaction-form">
+          <label class="field"><span>股票代碼</span><input id="quoteCode" required maxlength="20" placeholder="例如 2330"></label>
+          <label class="field"><span>目前價格</span><input id="quotePrice" type="number" min="0.0001" step="0.0001" required inputmode="decimal"></label>
+          <button id="saveQuote" class="primary field-wide" type="submit">儲存目前價格</button>
+        </form>
+        <hr class="section-divider">
+        <h3>批次更新</h3>
+        <p class="disclaimer">每行輸入「股票代碼,價格」，例如 2330,1125。單次最多 100 筆。</p>
+        <textarea id="batchQuoteText" class="batch-quote-input" rows="6" placeholder="2330,1125
+2454,1380
+2382,295"></textarea>
+        <div class="form-actions"><button id="saveBatchQuotes" class="primary" type="button">批次儲存</button><button id="clearBatchQuotes" class="ghost" type="button">清除</button></div>
+        <div id="quoteHistoryPanel" class="quote-history-panel"><p class="empty">更新股價後，可查看最近變動。</p></div>
+      </section>
+
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">CSV Center</p><h2>交易 CSV 匯入與匯出</h2></div></div>
+        <div class="backup-actions">
+          <button id="exportCsv" class="primary" type="button">下載交易 CSV</button>
+          <label class="file-button">選擇 CSV 檔<input id="csvFile" type="file" accept="text/csv,.csv"></label>
+          <select id="csvImportMode" aria-label="CSV 匯入模式"><option value="merge">合併到目前交易</option><option value="replace">取代目前交易</option></select>
+          <button id="importCsv" class="ghost" type="button">匯入交易 CSV</button>
+        </div>
+        <p id="csvFileName" class="disclaimer">欄位順序可調整，但必須包含 type、code、name、shares、price、fee、tax、tradeDate、note。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Cloud Backup</p><h2>資料備份與還原</h2></div></div>
+        <div class="backup-actions">
+          <button id="exportBackup" class="primary" type="button">下載完整備份</button>
+          <label class="file-button">選擇備份檔<input id="backupFile" type="file" accept="application/json,.json"></label>
+          <select id="importMode" aria-label="匯入模式"><option value="replace">取代目前資料</option><option value="merge">合併到目前資料</option></select>
+          <button id="importBackup" class="ghost" type="button">開始還原</button>
+        </div>
+        <p id="backupFileName" class="disclaimer">尚未選擇備份檔。還原前系統會檢查交易是否出現賣超。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Price Alerts</p><h2>價格提醒中心</h2></div><button id="evaluateAlerts" class="ghost" type="button">立即檢查</button></div>
+        <form id="alertForm" class="transaction-form">
+          <input id="alertId" type="hidden">
+          <label class="field"><span>股票代碼</span><input id="alertCode" required maxlength="20" placeholder="例如 2330"></label>
+          <label class="field"><span>股票名稱</span><input id="alertName" maxlength="100" placeholder="例如 台積電"></label>
+          <label class="field"><span>提醒條件</span><select id="alertDirection"><option value="ABOVE">價格高於或等於</option><option value="BELOW">價格低於或等於</option></select></label>
+          <label class="field"><span>目標價格</span><input id="alertTargetPrice" type="number" min="0.0001" step="0.0001" required inputmode="decimal"></label>
+          <button id="saveAlert" class="primary field-wide" type="submit">建立提醒</button>
+          <button id="cancelAlertEdit" class="ghost field-wide hidden" type="button">取消修改</button>
+        </form>
+        <div id="alertSummary" class="ai-summary"></div>
+        <div id="alertCards" class="cards"><p class="empty">尚無價格提醒</p></div>
+        <p class="disclaimer">提醒依你手動更新的目前股價判斷，不代表即時市場通知。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Watchlist</p><h2>股票觀察清單</h2></div></div>
+        <form id="watchlistForm" class="transaction-form">
+          <input id="watchlistId" type="hidden">
+          <label class="field"><span>股票代號</span><input id="watchCode" maxlength="20" placeholder="例如 2330" required></label>
+          <label class="field"><span>股票名稱</span><input id="watchName" maxlength="100" placeholder="例如 台積電"></label>
+          <label class="field"><span>目標買進價</span><input id="watchBuyPrice" type="number" min="0.0001" step="0.0001" placeholder="可留空"></label>
+          <label class="field"><span>目標賣出價</span><input id="watchSellPrice" type="number" min="0.0001" step="0.0001" placeholder="可留空"></label>
+          <label class="field"><span>優先程度</span><select id="watchPriority"><option value="5">5 最高</option><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1 最低</option></select></label>
+          <label class="field field-wide"><span>觀察備註</span><input id="watchNote" maxlength="1000" placeholder="例如：等待回測月線、財報公布後再評估"></label>
+          <div class="field-wide form-actions"><button id="saveWatchlist" class="primary" type="submit">加入觀察</button><button id="cancelWatchEdit" class="ghost hidden" type="button">取消修改</button></div>
+        </form>
+        <div id="watchSummary" class="ai-summary"></div>
+        <div id="watchCards" class="cards"><p class="empty">尚無觀察股票</p></div>
+        <p class="disclaimer">條件依手動輸入的目前股價判斷，只作為個人追蹤提示。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">AI Risk Engine</p><h2>策略與風險設定</h2></div></div>
+        <form id="strategyForm" class="transaction-form">
+          <label class="field"><span>目標獲利率（%）</span><input id="targetProfitRate" type="number" min="0.5" max="100" step="0.1" required></label>
+          <label class="field"><span>停損率（%）</span><input id="stopLossRate" type="number" min="1" max="100" step="0.5" required></label>
+          <label class="field"><span>單一持股上限（%）</span><input id="maxPositionRate" type="number" min="5" max="100" step="1" required></label>
+          <label class="field"><span>股價有效時間（小時）</span><input id="staleQuoteHours" type="number" min="1" max="720" step="1" required></label>
+          <button id="saveStrategy" class="primary field-wide" type="submit">儲存策略設定</button>
+        </form>
+      </section>
+
+      <section class="panel trade-plan-panel">
+        <div class="panel-head"><div><p class="eyebrow">Trade Planner</p><h2>交易計畫與風險報酬</h2></div></div>
+        <form id="tradePlanForm" class="transaction-form">
+          <input id="tradePlanId" type="hidden">
+          <label class="field"><span>計畫日期</span><input id="tradePlanDate" type="date" required></label>
+          <label class="field"><span>股票代號</span><input id="tradePlanCode" maxlength="20" required></label>
+          <label class="field"><span>股票名稱</span><input id="tradePlanName" maxlength="100"></label>
+          <label class="field"><span>方向</span><select id="tradePlanAction"><option value="BUY">買進</option><option value="SELL">賣出</option></select></label>
+          <label class="field"><span>計畫價格</span><input id="tradePlanPrice" type="number" min="0.0001" step="0.0001" required></label>
+          <label class="field"><span>股數</span><input id="tradePlanShares" type="number" min="1" step="1" required></label>
+          <label class="field"><span>停損價</span><input id="tradePlanStop" type="number" min="0.0001" step="0.0001"></label>
+          <label class="field"><span>目標價</span><input id="tradePlanTarget" type="number" min="0.0001" step="0.0001"></label>
+          <label class="field"><span>狀態</span><select id="tradePlanStatus"><option value="PLANNED">計畫中</option><option value="EXECUTED">已執行</option><option value="CANCELLED">已取消</option></select></label>
+          <label class="field field-wide"><span>計畫理由／進出場條件</span><textarea id="tradePlanNote" rows="3" maxlength="1000"></textarea></label>
+          <div class="form-actions field-wide"><button id="saveTradePlan" class="primary" type="submit">儲存交易計畫</button><button id="cancelTradePlanEdit" class="ghost hidden" type="button">取消修改</button></div>
+        </form>
+        <div id="tradePlanSummary" class="ai-summary"></div>
+        <div id="tradePlanCards" class="cards"><p class="empty">尚無交易計畫。</p></div>
+        <p class="disclaimer">風險報酬計算只用於交易前規劃，不會自動下單或保證獲利。</p>
+      </section>
+
+      <section class="panel opportunity-panel">
+        <div class="panel-head"><div><p class="eyebrow">Alpha Finder</p><h2>投資機會排序中心</h2></div><button id="refreshOpportunities" class="ghost" type="button">重新排序</button></div>
+        <div id="opportunitySummary" class="ai-summary"></div>
+        <div id="opportunityCards" class="cards"><p class="empty">正在整理觀察清單…</p></div>
+        <p id="opportunityDisclaimer" class="disclaimer"></p>
+      </section>
+
+      <section class="panel daily-brief-panel">
+        <div class="panel-head"><div><p class="eyebrow">CEO Daily Brief</p><h2 id="dailyBriefHeadline">今日行動清單</h2></div><button id="refreshDailyBrief" class="ghost" type="button">重新整理</button></div>
+        <div id="dailyBriefSummary" class="ai-summary"></div>
+        <div id="dailyBriefCards" class="brief-list"><p class="empty">資料載入中</p></div>
+        <p class="disclaimer">依手動股價、持股紀錄、價格提醒與策略設定整理，不會自動下單。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Account Security</p><h2>帳號與裝置安全</h2></div><button id="refreshSessions" class="ghost" type="button">重新整理裝置</button></div>
+        <div class="security-grid">
+          <form id="profileForm" class="transaction-form compact-form">
+            <label class="field field-wide"><span>顯示姓名</span><input id="profileName" maxlength="100" required></label>
+            <button id="saveProfile" class="primary field-wide" type="submit">儲存姓名</button>
+          </form>
+          <form id="passwordForm" class="transaction-form compact-form">
+            <label class="field"><span>目前密碼</span><input id="currentPassword" type="password" minlength="8" maxlength="72" required autocomplete="current-password"></label>
+            <label class="field"><span>新密碼</span><input id="newPassword" type="password" minlength="8" maxlength="72" required autocomplete="new-password"></label>
+            <label class="field field-wide"><span>確認新密碼</span><input id="confirmPassword" type="password" minlength="8" maxlength="72" required autocomplete="new-password"></label>
+            <button id="savePassword" class="primary field-wide" type="submit">更新密碼並重新登入</button>
+          </form>
+        </div>
+        <div class="panel-head device-head"><div><h3>最近登入裝置</h3></div><button id="revokeOtherSessions" class="ghost" type="button">登出其他裝置</button></div>
+        <div id="sessionCards" class="notification-list"><p class="empty">載入中…</p></div>
+        <p class="disclaimer">更新密碼後，所有裝置都必須重新登入。裝置資訊來自登入時的瀏覽器與網路位址。</p>
+      </section>
+
+      <section class="panel integrity-panel">
+        <div class="panel-head"><div><p class="eyebrow">Data Integrity</p><h2>資料完整性中心</h2></div><div class="notification-toolbar"><button id="refreshIntegrity" class="ghost" type="button">重新檢查</button><button id="runMaintenance" class="ghost" type="button">安全清理</button></div></div>
+        <div id="integritySummary" class="ai-summary"></div>
+        <div id="integrityCounts" class="summary-grid"></div>
+        <div class="health-lists"><div><h3>檢查結果</h3><ul id="integrityIssues"><li>資料載入中</li></ul></div><div><h3>建議處理</h3><ul id="integrityRecommendations"><li>資料載入中</li></ul></div></div>
+        <p class="disclaimer">安全清理只移除七天前的過期登入憑證，以及三十天前已移除的通知；不會刪除交易、持股或股價資料。</p>
+      </section>
+
+      <section class="panel notification-panel">
+        <div class="panel-head"><div><p class="eyebrow">Notification Center</p><h2>通知中心 <span id="notificationBadge" class="count-badge hidden">0</span></h2></div><div class="notification-toolbar"><button id="syncNotifications" class="ghost" type="button">同步今日通知</button><button id="readAllNotifications" class="ghost" type="button">全部已讀</button></div></div>
+        <div id="notificationSummary" class="ai-summary"></div>
+        <div id="notificationCards" class="notification-list"><p class="empty">尚無通知</p></div>
+        <p class="disclaimer">通知由今日行動清單同步產生；可標記已讀或移除，不會自動下單。</p>
+      </section>
+
+      <section class="panel health-panel">
+        <div class="panel-head"><div><p class="eyebrow">Portfolio Health</p><h2>資產健康檢查</h2></div></div>
+        <div class="health-head"><div id="healthScore" class="health-score">—</div><div><strong id="healthGrade">尚未計算</strong><p>依價格完整度、持股集中度、現金、提醒與配置目標綜合計算。</p></div></div>
+        <div id="healthMetrics" class="summary-grid"></div>
+        <div class="health-lists"><div><h3>需要注意</h3><ul id="healthIssues"><li>資料載入中</li></ul></div><div><h3>建議處理</h3><ul id="healthRecommendations"><li>資料載入中</li></ul></div></div>
+        <p class="disclaimer">健康分數是風險整理工具，不代表獲利機率，也不會自動下單。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">AI Decision Center</p><h2>持股判斷中心</h2></div><button id="refreshAnalysis" class="ghost" type="button">重新分析</button></div>
+        <div class="ai-summary" id="aiSummary"></div>
+        <div id="analysisCards" class="cards"><p class="empty">尚無可分析持股</p></div>
+        <p class="disclaimer">分析依持股成本、手動輸入股價與風險設定計算，不保證獲利，也不是即時行情或代客投資建議。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Global Search</p><h2>全系統資料搜尋</h2></div></div>
+        <form id="searchForm" class="search-form">
+          <input id="searchKeyword" maxlength="80" placeholder="輸入股票代號、名稱、備註或日誌內容" required>
+          <select id="searchType" aria-label="搜尋範圍">
+            <option value="all">全部資料</option><option value="transaction">交易</option><option value="watchlist">觀察清單</option><option value="journal">投資日誌</option><option value="dividend">股利</option><option value="cash">現金</option>
+          </select>
+          <button id="runSearch" class="primary" type="submit">搜尋</button>
+        </form>
+        <div id="searchSummary" class="ai-summary"></div>
+        <div id="searchResults" class="cards"><p class="empty">輸入至少 2 個字元開始搜尋。</p></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">Asset Trend</p><h2>每日資產走勢</h2></div>
+          <div class="trend-actions">
+            <select id="snapshotDays" aria-label="走勢期間">
+              <option value="7">7 天</option><option value="30" selected>30 天</option><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option>
+            </select>
+            <button id="saveSnapshot" class="primary" type="button">儲存今日快照</button>
+          </div>
+        </div>
+        <div id="snapshotSummary" class="ai-summary"></div>
+        <div class="chart-wrap"><svg id="assetChart" class="asset-chart" viewBox="0 0 900 300" role="img" aria-label="每日資產市值走勢圖"></svg></div>
+        <div id="snapshotTable" class="snapshot-table"><p class="empty">尚無資產快照</p></div>
+        <p class="disclaimer">同一天重複儲存會更新當日數字，不會產生重複資料。</p>
+      </section>
+
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Allocation Center</p><h2>資產配置與再平衡</h2></div></div>
+        <form id="allocationForm" class="transaction-form">
+          <label class="field"><span>股票代號</span><input id="allocationCode" maxlength="20" placeholder="例如 2330" required></label>
+          <label class="field"><span>投資分類</span><input id="allocationCategory" maxlength="80" placeholder="例如 AI、金融、ETF" value="未分類"></label>
+          <label class="field"><span>目標比重（%）</span><input id="allocationTargetRate" type="number" min="0" max="100" step="0.1" required></label>
+          <div class="field-wide form-actions"><button id="saveAllocation" class="primary" type="submit">儲存配置目標</button><button id="cancelAllocationEdit" class="ghost hidden" type="button">取消修改</button></div>
+        </form>
+        <div id="allocationSummary" class="ai-summary"></div>
+        <div id="allocationCards" class="cards"><p class="empty">尚無配置目標。</p></div>
+        <p class="disclaimer">再平衡金額依手動輸入的股價與目前市值估算；目標比重合計建議為 100%。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Investment Journal</p><h2>投資決策日誌</h2></div></div>
+        <form id="journalForm" class="transaction-form">
+          <input id="journalId" type="hidden">
+          <label class="field"><span>日期</span><input id="journalDate" type="date" required></label>
+          <label class="field"><span>股票代號</span><input id="journalCode" maxlength="20" placeholder="可留空"></label>
+          <label class="field"><span>決策</span><select id="journalDecision"><option value="OBSERVE">觀察</option><option value="BUY">買進</option><option value="SELL">賣出</option><option value="HOLD">續抱</option><option value="REVIEW">檢討</option></select></label>
+          <label class="field"><span>信心程度</span><select id="journalConfidence"><option value="5">5 很有信心</option><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1 保守</option></select></label>
+          <label class="field field-wide"><span>標題</span><input id="journalTitle" maxlength="160" required placeholder="例如：2330 回測支撐後分批布局"></label>
+          <label class="field field-wide"><span>原始計畫</span><textarea id="journalPlan" maxlength="5000" rows="3" placeholder="進場理由、目標價、停損點與資金配置"></textarea></label>
+          <label class="field field-wide"><span>執行結果</span><textarea id="journalResult" maxlength="5000" rows="3" placeholder="實際執行與結果，可日後補寫"></textarea></label>
+          <label class="field field-wide"><span>檢討與心得</span><textarea id="journalLesson" maxlength="5000" rows="3" placeholder="這次做對什麼、下次要改進什麼"></textarea></label>
+          <div class="field-wide form-actions"><button id="saveJournal" class="primary" type="submit">儲存日誌</button><button id="cancelJournalEdit" class="ghost hidden" type="button">取消修改</button></div>
+        </form>
+        <div id="journalSummary" class="ai-summary"></div>
+        <div id="journalCards" class="cards"><p class="empty">尚無投資日誌。</p></div>
+      </section>
+
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Dividend Income</p><h2>股利收入中心</h2></div></div>
+        <form id="dividendForm" class="transaction-form">
+          <input id="dividendId" type="hidden">
+          <label class="field"><span>股票代號</span><input id="dividendCode" maxlength="20" placeholder="例如 2330" required></label>
+          <label class="field"><span>股票名稱</span><input id="dividendName" maxlength="100" placeholder="台積電"></label>
+          <label class="field"><span>除息日</span><input id="dividendExDate" type="date" required></label>
+          <label class="field"><span>發放日</span><input id="dividendPayDate" type="date"></label>
+          <label class="field"><span>持有股數</span><input id="dividendShares" type="number" min="1" step="1" required></label>
+          <label class="field"><span>每股股利</span><input id="dividendPerShare" type="number" min="0" step="0.0001" required></label>
+          <label class="field"><span>稅額</span><input id="dividendTax" type="number" min="0" step="0.01" value="0"></label>
+          <label class="field"><span>其他費用</span><input id="dividendFee" type="number" min="0" step="0.01" value="0"></label>
+          <label class="field field-wide"><span>備註</span><input id="dividendNote" maxlength="1000" placeholder="現金股利、股票股利說明"></label>
+          <div class="field-wide form-actions"><button id="saveDividend" class="primary" type="submit">儲存股利紀錄</button><button id="cancelDividendEdit" class="ghost hidden" type="button">取消修改</button></div>
+        </form>
+        <div id="dividendSummary" class="ai-summary"></div>
+        <div id="dividendCards" class="cards"><p class="empty">尚無股利紀錄。</p></div>
+        <p class="disclaimer">淨收入＝持有股數 × 每股股利－稅額－其他費用。</p>
+      </section>
+
+
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Cash Management</p><h2>現金與資金流中心</h2></div></div>
+        <form id="cashForm" class="transaction-form">
+          <input id="cashId" type="hidden">
+          <label class="field"><span>日期</span><input id="cashDate" type="date" required></label>
+          <label class="field"><span>類型</span><select id="cashType"><option value="DEPOSIT">資金存入</option><option value="WITHDRAW">資金提領</option><option value="INTEREST">利息收入</option><option value="FEE">帳戶費用</option><option value="OTHER_IN">其他收入</option><option value="OTHER_OUT">其他支出</option></select></label>
+          <label class="field"><span>金額</span><input id="cashAmount" type="number" min="0.01" step="0.01" required></label>
+          <label class="field field-wide"><span>備註</span><input id="cashNote" maxlength="1000" placeholder="例如：投入投資本金、提領生活費"></label>
+          <div class="field-wide form-actions"><button id="saveCash" class="primary" type="submit">儲存現金紀錄</button><button id="cancelCashEdit" class="ghost hidden" type="button">取消修改</button></div>
+        </form>
+        <div id="cashSummary" class="ai-summary"></div>
+        <div id="cashCards" class="cards"><p class="empty">尚無現金紀錄。</p></div>
+        <p class="disclaimer">估算現金餘額＝手動資金流＋股票買賣現金流＋股利淨收入；未連接銀行或券商帳戶。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Performance Report</p><h2>投資績效報告</h2></div></div>
+        <div id="reportSummary" class="ai-summary"></div>
+        <div id="reportMetrics" class="summary-grid"></div>
+        <h3>近 12 個月已實現損益</h3>
+        <div id="monthlyReport" class="snapshot-table"><p class="empty">尚無賣出紀錄</p></div>
+        <h3>個股績效</h3>
+        <div id="stockReport" class="cards"><p class="empty">尚無績效資料</p></div>
+        <p class="disclaimer">勝率以每一筆賣出交易計算；未實現損益依手動輸入的目前股價計算。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Portfolio</p><h2>目前持股</h2></div><button id="refreshButton" class="ghost" type="button">更新</button></div>
+        <div id="positions" class="cards"><p class="empty">尚無持股</p></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><p class="eyebrow">History</p><h2>交易紀錄</h2></div></div>
+        <div id="transactions" class="cards"><p class="empty">尚無交易紀錄</p></div>
+      </section>
+
+      <section class="panel audit-panel">
+        <div class="panel-head"><div><p class="eyebrow">Activity Audit</p><h2>操作稽核紀錄</h2></div><div class="audit-toolbar"><select id="auditDays" aria-label="稽核期間"><option value="7">7 天</option><option value="30" selected>30 天</option><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option></select><button id="refreshAudit" class="ghost" type="button">重新整理</button><button id="cleanupAudit" class="ghost" type="button">清理舊紀錄</button></div></div>
+        <div id="auditSummary" class="ai-summary"></div>
+        <div id="auditCards" class="audit-list"><p class="empty">資料載入中</p></div>
+        <p class="disclaimer">保存新增、修改與刪除操作的時間、結果及裝置資訊；不保存密碼或 JWT 內容。</p>
+      </section>
+
+      <section class="panel weekly-review-panel">
+        <div class="panel-head"><div><p class="eyebrow">Sprint 31</p><h2>每週投資檢討報告</h2></div><button id="refreshWeeklyReview" class="ghost" type="button">重新整理</button></div>
+        <div id="weeklyReviewScorecard" class="summary-grid"><p class="empty">資料載入中</p></div>
+        <div class="weekly-review-grid">
+          <article><h3>本週做得好</h3><div id="weeklyWins"><p class="empty">尚無資料</p></div></article>
+          <article><h3>風險與不足</h3><div id="weeklyRisks"><p class="empty">尚無資料</p></div></article>
+          <article><h3>下週優先行動</h3><div id="weeklyActions"><p class="empty">尚無資料</p></div></article>
+        </div>
+        <h3>目標進度</h3><div id="weeklyGoals" class="cards"><p class="empty">尚無進行中目標</p></div>
+        <p id="weeklyReviewNote" class="disclaimer"></p>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">Sprint 30</p><h2>投資目標追蹤中心</h2></div></div>
+        <form id="goalForm" class="transaction-form">
+          <input id="goalId" type="hidden">
+          <label class="field field-wide"><span>目標名稱</span><input id="goalTitle" maxlength="160" required placeholder="例：年底淨資產達到 300 萬"></label>
+          <label class="field"><span>目標類型</span><select id="goalType"><option value="NET_WORTH">淨資產</option><option value="MARKET_VALUE">持股市值</option><option value="CASH">可用現金</option><option value="DIVIDEND">累計股利</option><option value="REALIZED_PROFIT">已實現損益</option></select></label>
+          <label class="field"><span>目標金額</span><input id="goalAmount" type="number" min="1" step="1" required></label>
+          <label class="field"><span>目標日期</span><input id="goalDate" type="date" required></label>
+          <label class="field"><span>狀態</span><select id="goalStatus"><option value="ACTIVE">進行中</option><option value="COMPLETED">已完成</option><option value="CANCELLED">已取消</option></select></label>
+          <label class="field field-wide"><span>備註</span><textarea id="goalNote" rows="3" maxlength="1000"></textarea></label>
+          <div class="form-actions"><button id="saveGoal" type="submit">儲存目標</button><button id="cancelGoalEdit" type="button" class="secondary hidden">取消修改</button></div>
+        </form>
+        <div id="goalSummary" class="ai-summary"></div>
+        <div id="goalCards" class="cards"><p class="empty">尚無投資目標。</p></div>
+        <p class="disclaimer">進度依目前系統中的持股市值、現金、股利與已實現損益估算，不代表保證達成。</p>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">Sprint 28</p><h2>每日盤前／盤後檢查</h2></div><button id="resetDailyRoutine" class="secondary" type="button">重設今日</button></div>
+        <div id="dailyRoutineSummary" class="ai-summary"></div>
+        <div id="dailyRoutineGroups" class="routine-grid"><p class="empty">載入中</p></div>
+        <div class="section-head compact"><div><h3>執行紀律趨勢</h3></div><select id="routineHistoryDays"><option value="7">7 天</option><option value="30" selected>30 天</option><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option></select></div>
+        <div id="routineHistorySummary" class="ai-summary"></div>
+        <div id="routineHistoryBars" class="routine-history"></div>
+        <p class="disclaimer">盤前建議於 7:30～8:30 完成；盤後於 14:00 後更新價格、交易與資產快照。</p>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">Sprint 27</p><h2>投資檢查任務</h2></div></div>
+        <form id="reviewTaskForm" class="transaction-form">
+          <input id="reviewTaskId" type="hidden">
+          <label class="field field-wide"><span>任務名稱</span><input id="reviewTaskTitle" maxlength="160" required placeholder="例：盤後檢查華邦電量價"></label>
+          <label class="field"><span>股票代號</span><input id="reviewTaskCode" maxlength="20"></label>
+          <label class="field"><span>類型</span><select id="reviewTaskCategory"><option value="REVIEW">例行檢查</option><option value="PRICE">價格</option><option value="RISK">風險</option><option value="RESEARCH">研究</option><option value="REPORT">報告</option><option value="OTHER">其他</option></select></label>
+          <label class="field"><span>到期日</span><input id="reviewTaskDueDate" type="date" required></label>
+          <label class="field"><span>優先級</span><select id="reviewTaskPriority"><option value="5">5 最高</option><option value="4">4</option><option value="3" selected>3</option><option value="2">2</option><option value="1">1</option></select></label>
+          <label class="field"><span>重複</span><select id="reviewTaskRepeat"><option value="NONE">不重複</option><option value="DAILY">每日</option><option value="WEEKLY">每週</option><option value="MONTHLY">每月</option><option value="QUARTERLY">每季</option></select></label>
+          <label class="field"><span>狀態</span><select id="reviewTaskStatus"><option value="OPEN">待處理</option><option value="DONE">已完成</option><option value="CANCELLED">已取消</option></select></label>
+          <label class="field field-wide"><span>備註</span><textarea id="reviewTaskNote" rows="3" maxlength="1000"></textarea></label>
+          <div class="form-actions"><button id="saveReviewTask" type="submit">儲存任務</button><button id="cancelReviewTaskEdit" type="button" class="secondary hidden">取消修改</button></div>
+        </form>
+        <div id="reviewTaskSummary" class="ai-summary"></div>
+        <div id="reviewTaskCards" class="cards"><p class="empty">尚無投資檢查任務。</p></div>
+      </section>
+    </section>
+
+    </main>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

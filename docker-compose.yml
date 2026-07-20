@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bjh_ai_pro
+      POSTGRES_USER: bjh
+      POSTGRES_PASSWORD: change_me
+    ports:
+      - "5432:5432"
+    volumes:
+      - bjh_postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bjh -d bjh_ai_pro"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: node:20-alpine
+    working_dir: /app
+    restart: unless-stopped
+    command: sh -c "npm install && npm run dev"
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      DATABASE_URL: postgresql://bjh:change_me@postgres:5432/bjh_ai_pro
+      CORS_ORIGIN: http://localhost:3000
+      JWT_ACCESS_SECRET: local-development-access-secret-change-before-production-2026
+      JWT_REFRESH_SECRET: local-development-refresh-secret-change-before-production-2026
+      ACCESS_TOKEN_TTL: 15m
+      REFRESH_TOKEN_TTL: 7d
+      COOKIE_SECURE: "false"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - ./frontend:/frontend:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  bjh_postgres_data:

@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { dismiss, list, readAll, setRead, sync } from "../controllers/notification.controller.js";
+import { authenticate } from "../middleware/auth.js";
+const router=Router();
+router.use(authenticate);
+router.get("/",list);
+router.post("/sync",sync);
+router.post("/read-all",readAll);
+router.put("/:id/read",setRead);
+router.delete("/:id",dismiss);
+export default router;
