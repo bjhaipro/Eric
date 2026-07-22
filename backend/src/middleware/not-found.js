@@ -7,3 +7,4 @@ export function notFoundHandler(req, res) {
     }
   });
 }
+export const notFound = notfoundHandler;
