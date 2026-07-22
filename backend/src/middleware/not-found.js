@@ -7,4 +7,4 @@ export function notFoundHandler(req, res) {
     }
   });
 }
-export const notFound = notfoundHandler;
+export const notFound = notFoundHandler;
