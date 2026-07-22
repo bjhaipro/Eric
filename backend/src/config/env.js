@@ -11,7 +11,7 @@ export const env = {
   port: Number(process.env.PORT ?? 3000),
   databaseUrl: required("DATABASE_URL"),
   corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:8080",
-  jwtAccessSecret: required("JWT_ACCESS_SECRET"),
+  jwtAccessSecret: required("ACCESS_SECRET"),
   jwtRefreshSecret: required("JWT_REFRESH_SECRET"),
   accessTokenTtl: process.env.ACCESS_TOKEN_TTL ?? "15m",
   refreshTokenTtl: process.env.REFRESH_TOKEN_TTL ?? "7d",
