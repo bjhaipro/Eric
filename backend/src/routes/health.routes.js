@@ -20,3 +20,4 @@ healthRouter.get("/", async (_req, res, next) => {
     next(error);
   }
 });
+export default healthRouter;
