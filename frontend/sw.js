@@ -1,4 +1,4 @@
-const CACHE="bjh-ai-pro-s4-v1";
+const CACHE="bjh-ai-pro-s4-v2";
 const ASSETS=["/","/index.html","/css/style.css","/js/app.js","/js/api.js","/manifest.webmanifest"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
